@@ -1,0 +1,34 @@
+apiVersion: v1
+entries:
+  nginx-page:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-06-01T12:14:09.684355+03:00"
+    description: A Helm chart for Kubernetes
+    digest: 9a045c8b7b1ce5427ba0064e73c27e30fc38f74ab3ba21460cf6a696ed2856df
+    name: nginx-page
+    type: application
+    urls:
+    - https://hussam-radwan.github.io/ex288/releases/nginx-page-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-06-01T12:14:09.683764+03:00"
+    description: A Helm chart for Kubernetes
+    digest: 63fb7826c61faa06750191904c2d4b89f44acedf495229ae07d07816ad611116
+    name: nginx-page
+    type: application
+    urls:
+    - https://hussam-radwan.github.io/ex288/releases/nginx-page-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2026-06-01T12:14:09.683247+03:00"
+    description: A Helm chart for Kubernetes
+    digest: 2e2afa071a1c23110481a44540822f0b4aa4069b7d1843d515c60f7032ba2b65
+    name: nginx-page
+    type: application
+    urls:
+    - https://hussam-radwan.github.io/ex288/releases/nginx-page-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-06-01T12:14:09.681859+03:00"

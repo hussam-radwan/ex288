@@ -12,6 +12,8 @@ This code repo is for my personal learning and working with openshift, main area
 - blue/green deployments
 
 `helm repo add hussam-radwan https://hussam-radwan.github.io/ex288/`
-`helm repo search hussam-radwan`
+
+`helm search repo hussam-radwan`
+
 `helm install my-release hussam-radwan/<chart>`
 

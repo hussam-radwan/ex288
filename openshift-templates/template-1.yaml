@@ -1,0 +1,79 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+labels:
+  templateLearning: "version1"
+  message: "notSureWheThisMaps"
+message: "this is my test message"
+metadata:
+  name: HussamTemplate1
+  labels:
+    label1: message1
+    label2: message2
+objects:
+  - apiVersion: v1
+    data:
+      BASE_URL: /
+      LOG_LEVEL: info
+      MOGNO_URL: mognodb://mongo:mongo@mongo:27017
+      PORT: "8080"
+    kind: ConfigMap
+    metadata:
+      name: template-config-map
+  - apiVersion: v1
+    data:
+      POSTGRES_URL: cG9zdGdyZXM6Ly9wb3N0Z3Jlczpwb3N0Z3Jlc0Bwb3N0Z3Jlczo1MzIx
+      SESSION_SECRET: R0VORVJBVEVE
+    kind: Secret
+    metadata:
+      creationTimestamp: null
+      name: template-generic-secret
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ${deploymentName}
+      name: ${deploymentName}
+    spec:
+      replicas: 3
+      selector:
+        matchLabels:
+          app: ${deploymentName}
+      strategy: {}
+      template:
+        metadata:
+          creationTimestamp: null
+          labels:
+            app: ${deploymentName}
+        spec:
+          containers:
+            - image: registry.access.redhat.com/hi/nginx:1
+              name: nginx
+              ports:
+                - containerPort: 8080
+              resources: {}
+    status: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ${deploymentName}
+      name: ${deploymentName}
+    spec:
+      ports:
+        - name: 8080-8080
+          port: 8080
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        app: ${deploymentName}
+      type: ClusterIP
+    status:
+      loadBalancer: {}
+parameters:
+  - name: deploymentName
+    displayName: "Deployment Name"
+    description: "Desc."
+    required: true
+    value: "template-deployment-1"

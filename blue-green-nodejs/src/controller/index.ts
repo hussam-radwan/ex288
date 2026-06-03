@@ -38,7 +38,7 @@ function commonStatus(req: Request, res: Response) {
   accessLog(req);
 
   const memObj = process.memoryUsage();
-  const memPercentage = (memObj.heapUsed / memObj.heapTotal) * 100;
+
   res.status(200).json({
     status: "success",
     success: true,

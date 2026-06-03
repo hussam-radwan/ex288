@@ -1,0 +1,20 @@
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: git-clone-
+spec:
+  params:
+  - name: url
+    value: 'https://github.com/hussam-radwan/ex288.git'
+  - name: revision
+    value: main
+  taskRef:
+    kind: Task
+    name: git-clone
+  timeout: 0h5m0s
+  workspaces:
+    - name: basic-auth
+      secret:
+        secretName: personal-github
+    - name: output
+      emptyDir: {}

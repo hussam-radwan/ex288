@@ -1,0 +1,75 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: template-2
+  labels:
+    ocp418: ex288
+labels:
+  learning: openshift-templates-training
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${name}
+      release: ${release}
+    name: ${name}
+  spec:
+    replicas: ${{replicas}}
+    selector:
+      matchLabels:
+        app: ${name}
+    strategy: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          app: ${name}
+      spec:
+        containers:
+          - image: ${imageName}:${imageTag}
+            name: nginx
+            ports:
+            - containerPort: ${{containerPort}}
+            env: 
+            - name: PORT
+              value: ${containerPort}
+            resources: {}
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: ${name}
+    name: ${name}
+  spec:
+    ports:
+      - name: ${containerPort}-${containerPort}
+        port: ${{containerPort}}
+        protocol: TCP
+        targetPort: t-${containerPort}
+    selector:
+      app: ${name}
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+parameters:
+  - name: name
+    description: "deployment name"
+    required: true
+  - name: imageName
+    description: "Image to be deployed"
+    required: true
+  - name: imageTag
+    description: "Image tag to be deployed"
+    required: true
+  - name: release
+    description: releaseNumber
+    from: "release-[0-9]{8}"
+    generate: "expression"
+  - name: replicas
+    description: number of replicas
+  - name: containerPort
+    description: Container Port

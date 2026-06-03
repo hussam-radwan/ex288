@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: node-task
+  labels:
+    learning: ex288
+spec:
+  description: description here
+  displayName: NodeJS Task Execution
+  params:
+  - name: command
+    type: string
+    default: npm
+  - name: args
+    type: array
+    properties:
+      items:
+        type: string
+  steps:
+  - name: action
+    image: node:20
+    workingDir: $(workspaces.workingDir.path)
+    command: 
+      - $(params.command)
+    args:
+      - $(params.args)
+  workspaces:
+    - name: workingDir
+      mountPath: /home/node/app
+      optional: false
+

@@ -30,7 +30,7 @@ echo "---> Building application from source..."
 set -e
 
 echo "---> Installing Node Packages..."
-npm install
+npm install --production
 
 
 echo "---> Running NPM Build..."

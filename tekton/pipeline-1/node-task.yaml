@@ -12,18 +12,23 @@ spec:
     type: string
     default: npm
   - name: args
-    type: array
-    properties:
-      items:
-        type: string
+    type: string
+    default: install
+  - name: sourcepath
+    type: string
+    default: /workspace/output
   steps:
   - name: action
     image: node:20
     workingDir: $(workspaces.workingDir.path)
-    command: 
-      - $(params.command)
-    args:
-      - $(params.args)
+    script: |
+      #!/usr/bin/env bash
+      ls -la
+      echo "Going into project folder"
+      cd $(params.sourcepath)
+      ls -la
+      echo "in project folder"
+      $(params.command) $(params.args)
   workspaces:
     - name: workingDir
       mountPath: /home/node/app

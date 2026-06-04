@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1
+kind: TaskRun
+metadata:
+  generateName: node-task-
+spec:
+  params:
+  - name: args
+    value: 
+    - init
+  taskRef:
+    kind: Task
+    name: node-task
+  timeout: 0h5m0s
+  workspaces:
+    - name: workingDir
+      emptyDir: {}

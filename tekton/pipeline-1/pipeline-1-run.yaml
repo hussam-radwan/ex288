@@ -1,0 +1,28 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: pipeline-1-run-
+spec:
+  params:
+    - name: gitUrl
+      value: https://github.com/hussam-radwan/ex288.git
+    - name: branch
+      value: main
+    - name: subdirectory
+      value: blue-green-nodejs
+    - name: image-tag
+      value: ghcr.io/hussam-radwan/blue-green-nodejs:0.0.5
+  pipelineRef:
+    name: nodejs-pipeline-1
+  workspaces:
+    - name: shared
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+    - name: basic-auth
+      secret:
+        secretName: personal-github

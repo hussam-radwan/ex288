@@ -1,0 +1,13 @@
+FROM registry.access.redhat.com/ubi9/nodejs-24-minimal:9.8-1779831271
+
+WORKDIR /opt/app-root
+
+COPY package.json package.json
+
+RUN npm run install
+
+COPY . .
+
+RUN npm run build --omit=dev
+
+ENTRYPOINT [ "npm", "run start" ]

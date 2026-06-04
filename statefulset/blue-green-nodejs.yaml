@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: blue-green-nodejs
+  name: blue-green-nodejs
+spec:
+  serviceName: blue-green-nodejs
+  replicas: 10
+  selector:
+    matchLabels:
+      app: blue-green-nodejs
+  template:
+    metadata:
+      labels:
+        app: blue-green-nodejs
+    spec:
+      containers:
+      - image: ghcr.io/hussam-radwan/blue-green-nodejs:latest
+        name: blue-green-nodejs
+        resources: {}
+        env:
+        - name: PORT
+          value: "8080"
+        - name: DEPLOYMENT
+          value: BLUE
+
+status: {}

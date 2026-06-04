@@ -1,0 +1,96 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: nodejs-pipeline-1
+spec:
+  description: NodeJS Build Pipeline
+  displayName: NodeJS Build Pipeline
+  params:
+    - name: gitUrl
+      type: string
+      default: https://github.com/hussam-radwan/ex288.git
+    - name: branch
+      type: string
+      default: main
+    - name: subdirectory
+      type: string
+      default: blue-green-nodejs
+    - name: image-tag
+      type: string
+  workspaces:
+    - name: shared
+      description: shared
+    - name: basic-auth
+      description: basic-auth
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      params:
+        - name: url
+          value: $(params.gitUrl)
+        - name: revision
+          value: $(params.branch)
+      workspaces:
+        - name: output
+          workspace: shared
+        - name: basic-auth
+          workspace: basic-auth
+    # - name: npm-install
+    #   taskRef:
+    #     name: node-task
+    #   runAfter:
+    #   - git-clone
+    #   params:
+    #   - name: command
+    #     value: npm
+    #   - name: args
+    #     value: install
+    #   - name: sourcepath
+    #     value: $(params.subdirectory)
+    #   workspaces:
+    #   - name: workingDir
+    #     workspace: shared
+    # - name: npm-build
+    #   taskRef:
+    #     name: node-task
+    #   runAfter:
+    #   - npm-install
+    #   params:
+    #   - name: command
+    #     value: npm
+    #   - name: args
+    #     value: run build --omit=dev
+    #   - name: sourcepath
+    #     value: $(params.subdirectory)
+    #   workspaces:
+    #   - name: workingDir
+    #     workspace: shared
+    # - name: npm-audit
+    #   taskRef:
+    #     name: node-task
+    #   runAfter:
+    #   - npm-build
+    #   params:
+    #   - name: command
+    #     value: npm
+    #   - name: args
+    #     value: audit
+    #   - name: sourcepath
+    #     value: $(params.subdirectory)
+    #   workspaces:
+    #   - name: workingDir
+    #     workspace: shared
+    - name: builder
+      taskRef:
+        name: buildah
+      runAfter:
+        - git-clone
+      workspaces:
+        - name: source
+          workspace: shared
+      params:
+        - name: IMAGE
+          value: $(params.image-tag)
+        - name: CONTEXT
+          value: ./$(params.subdirectory)

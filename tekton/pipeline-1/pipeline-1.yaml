@@ -22,6 +22,8 @@ spec:
       description: shared
     - name: basic-auth
       description: basic-auth
+    - name: dockerconfig
+      description: dockerconfig
   tasks:
     - name: git-clone
       taskRef:
@@ -36,63 +38,50 @@ spec:
           workspace: shared
         - name: basic-auth
           workspace: basic-auth
-    # - name: npm-install
-    #   taskRef:
-    #     name: node-task
-    #   runAfter:
-    #   - git-clone
-    #   params:
-    #   - name: command
-    #     value: npm
-    #   - name: args
-    #     value: install
-    #   - name: sourcepath
-    #     value: $(params.subdirectory)
-    #   workspaces:
-    #   - name: workingDir
-    #     workspace: shared
-    # - name: npm-build
-    #   taskRef:
-    #     name: node-task
-    #   runAfter:
-    #   - npm-install
-    #   params:
-    #   - name: command
-    #     value: npm
-    #   - name: args
-    #     value: run build --omit=dev
-    #   - name: sourcepath
-    #     value: $(params.subdirectory)
-    #   workspaces:
-    #   - name: workingDir
-    #     workspace: shared
-    # - name: npm-audit
-    #   taskRef:
-    #     name: node-task
-    #   runAfter:
-    #   - npm-build
-    #   params:
-    #   - name: command
-    #     value: npm
-    #   - name: args
-    #     value: audit
-    #   - name: sourcepath
-    #     value: $(params.subdirectory)
-    #   workspaces:
-    #   - name: workingDir
-    #     workspace: shared
-    - name: source-to-image
+    - name: npm-install
       taskRef:
-        name: s2i
+        name: node-task
       runAfter:
         - git-clone
+      params:
+        - name: command
+          value: npm
+        - name: args
+          value: install
+        - name: sourcepath
+          value: $(params.subdirectory)
+      workspaces:
+        - name: workingDir
+          workspace: shared
+    - name: npm-audit
+      taskRef:
+        name: node-task
+      runAfter:
+        - npm-install
+      params:
+        - name: command
+          value: npm
+        - name: args
+          value: audit
+        - name: sourcepath
+          value: $(params.subdirectory)
+      workspaces:
+        - name: workingDir
+          workspace: shared
+    - name: buildah
+      taskRef:
+        name: buildah
+      runAfter:
+        - npm-audit
       workspaces:
         - name: source
           workspace: shared
+        - name: dockerconfig
+          workspace: dockerconfig
       params:
-        - name: BUILDER_IMAGE
-          value: registry.access.redhat.com/ubi9/nodejs-20
         - name: IMAGE
           value: $(params.image-tag)
-        - name: PATH_CONTEXT
+        - name: CONTEXT
           value: ./$(params.subdirectory)
+        - name: DOCKERFILE
+          value: Dockerfile.manual

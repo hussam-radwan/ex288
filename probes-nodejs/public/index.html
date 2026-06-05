@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kubernetes Probes Demo - Node.js Microservice</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+      <!-- Header -->
+      <header class="text-center mb-12">
+        <div class="inline-block bg-white rounded-full p-4 shadow-lg mb-4">
+          <i class="fas fa-heartbeat text-5xl text-indigo-600"></i>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-3">
+          Kubernetes Probes Demo
+        </h1>
+        <p class="text-xl text-gray-600">
+          Node.js Microservice for Testing Health Checks
+        </p>
+      </header>
+
+      <!-- Introduction Card -->
+      <div class="bg-white rounded-lg shadow-xl p-8 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-info-circle text-indigo-600 mr-3"></i>
+          About This Microservice
+        </h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          This Node.js microservice is designed to demonstrate Kubernetes health
+          check mechanisms including
+          <span class="font-semibold text-indigo-600">startup probes</span>,
+          <span class="font-semibold text-green-600">readiness probes</span>,
+          and <span class="font-semibold text-red-600">liveness probes</span>.
+          It provides endpoints that simulate healthy and unhealthy states to
+          help you understand how Kubernetes manages container lifecycle.
+        </p>
+      </div>
+
+      <!-- Kubernetes Probes Explanation -->
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <!-- Startup Probe -->
+        <div
+          class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-indigo-500 hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-rocket text-3xl text-indigo-500 mr-3"></i>
+            <h3 class="text-xl font-bold text-gray-800">Startup Probe</h3>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Checks if the application has started successfully. Kubernetes waits
+            for this probe to succeed before checking readiness and liveness
+            probes. Useful for slow-starting containers.
+          </p>
+        </div>
+
+        <!-- Readiness Probe -->
+        <div
+          class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-green-500 hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-check-circle text-3xl text-green-500 mr-3"></i>
+            <h3 class="text-xl font-bold text-gray-800">Readiness Probe</h3>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Determines if the container is ready to accept traffic. If it fails,
+            Kubernetes removes the pod from service endpoints, preventing
+            traffic from reaching it until it recovers.
+          </p>
+        </div>
+
+        <!-- Liveness Probe -->
+        <div
+          class="bg-white rounded-lg shadow-lg p-6 border-t-4 border-red-500 hover:shadow-xl transition-shadow"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-heartbeat text-3xl text-red-500 mr-3"></i>
+            <h3 class="text-xl font-bold text-gray-800">Liveness Probe</h3>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Checks if the container is still running properly. If it fails,
+            Kubernetes restarts the container to recover from deadlocks or
+            unresponsive states.
+          </p>
+        </div>
+      </div>
+
+      <!-- API Endpoints -->
+      <div class="bg-white rounded-lg shadow-xl p-8 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+          <i class="fas fa-code text-indigo-600 mr-3"></i>
+          Available API Endpoints
+        </h2>
+
+        <div class="space-y-4">
+          <!-- Startup Endpoint -->
+          <div
+            class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded-r-lg"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center">
+                <span
+                  class="bg-indigo-600 text-white px-3 py-1 rounded text-sm font-semibold mr-3"
+                  >GET</span
+                >
+                <code class="text-lg font-mono text-gray-800">/startup</code>
+              </div>
+              <button
+                onclick="testEndpoint('/startup')"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-play mr-2"></i>Test
+              </button>
+            </div>
+            <p class="text-gray-600 text-sm">
+              Startup probe endpoint - Returns 200 when healthy, 503 after crash
+            </p>
+          </div>
+
+          <!-- Readiness Endpoint -->
+          <div class="border-l-4 border-green-500 bg-green-50 p-4 rounded-r-lg">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center">
+                <span
+                  class="bg-green-600 text-white px-3 py-1 rounded text-sm font-semibold mr-3"
+                  >GET</span
+                >
+                <code class="text-lg font-mono text-gray-800">/readiness</code>
+              </div>
+              <button
+                onclick="testEndpoint('/readiness')"
+                class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-play mr-2"></i>Test
+              </button>
+            </div>
+            <p class="text-gray-600 text-sm">
+              Readiness probe endpoint - Returns 200 when ready, 503 after crash
+            </p>
+          </div>
+
+          <!-- Liveness Endpoint -->
+          <div class="border-l-4 border-red-500 bg-red-50 p-4 rounded-r-lg">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center">
+                <span
+                  class="bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold mr-3"
+                  >GET</span
+                >
+                <code class="text-lg font-mono text-gray-800">/liveness</code>
+              </div>
+              <button
+                onclick="testEndpoint('/liveness')"
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-play mr-2"></i>Test
+              </button>
+            </div>
+            <p class="text-gray-600 text-sm">
+              Liveness probe endpoint - Returns 200 when alive, 503 after crash
+            </p>
+          </div>
+
+          <!-- Status Endpoint -->
+          <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-r-lg">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center">
+                <span
+                  class="bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold mr-3"
+                  >GET</span
+                >
+                <code class="text-lg font-mono text-gray-800">/status</code>
+              </div>
+              <button
+                onclick="testEndpoint('/status')"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-play mr-2"></i>Test
+              </button>
+            </div>
+            <p class="text-gray-600 text-sm">
+              Returns detailed service status including uptime, CPU, and memory
+              usage
+            </p>
+          </div>
+
+          <!-- Crash Endpoint -->
+          <div
+            class="border-l-4 border-yellow-500 bg-yellow-50 p-4 rounded-r-lg"
+          >
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center">
+                <span
+                  class="bg-yellow-600 text-white px-3 py-1 rounded text-sm font-semibold mr-3"
+                  >GET</span
+                >
+                <code class="text-lg font-mono text-gray-800">/crash</code>
+              </div>
+              <button
+                onclick="triggerCrash()"
+                class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm transition-colors"
+              >
+                <i class="fas fa-exclamation-triangle mr-2"></i>Trigger
+              </button>
+            </div>
+            <p class="text-gray-600 text-sm font-semibold">
+              ⚠️ Triggers crash mode - All probe endpoints will start returning
+              503 errors
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Display -->
+      <div
+        id="responseSection"
+        class="bg-white rounded-lg shadow-xl p-8 mb-8 hidden"
+      >
+        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-terminal text-indigo-600 mr-3"></i>
+          Response
+        </h3>
+        <div
+          id="responseContent"
+          class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"
+        ></div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="bg-white rounded-lg shadow-xl p-8 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+          <i class="fas fa-cogs text-indigo-600 mr-3"></i>
+          How It Works
+        </h2>
+
+        <div class="space-y-4">
+          <div class="flex items-start">
+            <div class="bg-indigo-100 rounded-full p-3 mr-4">
+              <i class="fas fa-check text-indigo-600"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-1">Normal Operation</h4>
+              <p class="text-gray-600 text-sm">
+                All probe endpoints return HTTP 200 with a success response,
+                indicating the service is healthy and ready to handle traffic.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="bg-yellow-100 rounded-full p-3 mr-4">
+              <i class="fas fa-bomb text-yellow-600"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-1">Crash Triggered</h4>
+              <p class="text-gray-600 text-sm">
+                When you call the
+                <code class="bg-gray-100 px-2 py-1 rounded">/crash</code>
+                endpoint, the service enters "crash mode" and sets an internal
+                flag.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="bg-red-100 rounded-full p-3 mr-4">
+              <i class="fas fa-times text-red-600"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-1">Probe Failures</h4>
+              <p class="text-gray-600 text-sm">
+                After crash mode is activated, all probe endpoints return HTTP
+                503 (Service Unavailable), simulating an unhealthy application
+                state.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start">
+            <div class="bg-blue-100 rounded-full p-3 mr-4">
+              <i class="fas fa-sync-alt text-blue-600"></i>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-1">
+                Kubernetes Response
+              </h4>
+              <p class="text-gray-600 text-sm">
+                Kubernetes detects the failing probes and takes action: removes
+                pod from service (readiness) or restarts the container
+                (liveness).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Use Cases -->
+      <div
+        class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-xl p-8 text-white"
+      >
+        <h2 class="text-2xl font-bold mb-4 flex items-center">
+          <i class="fas fa-lightbulb mr-3"></i>
+          Learning Objectives
+        </h2>
+        <ul class="space-y-3">
+          <li class="flex items-start">
+            <i class="fas fa-check-circle mr-3 mt-1"></i>
+            <span
+              >Understand how Kubernetes uses probes to manage container
+              lifecycle</span
+            >
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle mr-3 mt-1"></i>
+            <span
+              >Observe the difference between startup, readiness, and liveness
+              probes</span
+            >
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle mr-3 mt-1"></i>
+            <span>Test how Kubernetes responds to failing health checks</span>
+          </li>
+          <li class="flex items-start">
+            <i class="fas fa-check-circle mr-3 mt-1"></i>
+            <span
+              >Practice configuring probe parameters (timeout, period,
+              threshold)</span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <footer class="text-center mt-12 text-gray-600">
+        <p class="text-sm">
+          <i class="fas fa-code mr-2"></i>
+          Built with Node.js, Express, and TypeScript for Kubernetes training
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      async function testEndpoint(endpoint) {
+        const responseSection = document.getElementById("responseSection");
+        const responseContent = document.getElementById("responseContent");
+
+        responseSection.classList.remove("hidden");
+        responseContent.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Loading...';
+
+        try {
+          const response = await fetch(endpoint);
+          const data = await response.json();
+
+          responseContent.innerHTML =
+            `<div class="mb-2"><span class="text-yellow-400">Status:</span> ${response.status} ${response.statusText}</div>` +
+            `<div class="mb-2"><span class="text-yellow-400">Endpoint:</span> ${endpoint}</div>` +
+            `<div><span class="text-yellow-400">Response:</span></div>` +
+            `<pre class="mt-2 text-xs">${JSON.stringify(data, null, 2)}</pre>`;
+
+          responseContent.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        } catch (error) {
+          responseContent.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
+        }
+      }
+
+      async function triggerCrash() {
+        if (
+          !confirm(
+            "⚠️ This will cause all probe endpoints to fail. The service will appear unhealthy to Kubernetes. Continue?",
+          )
+        ) {
+          return;
+        }
+
+        const responseSection = document.getElementById("responseSection");
+        const responseContent = document.getElementById("responseContent");
+
+        responseSection.classList.remove("hidden");
+        responseContent.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Triggering crash mode...';
+
+        try {
+          const response = await fetch("/crash");
+          const data = await response.json();
+
+          responseContent.innerHTML =
+            `<div class="mb-2"><span class="text-yellow-400">Status:</span> ${response.status} ${response.statusText}</div>` +
+            `<div class="mb-2"><span class="text-red-400">⚠️ CRASH MODE ACTIVATED</span></div>` +
+            `<div class="mb-2"><span class="text-yellow-400">Response:</span></div>` +
+            `<pre class="mt-2 text-xs">${JSON.stringify(data, null, 2)}</pre>` +
+            `<div class="mt-4 text-yellow-400">All probe endpoints will now return 503 errors.</div>` +
+            `<div class="text-yellow-400">Kubernetes will detect the failures and take action.</div>`;
+
+          responseContent.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest",
+          });
+        } catch (error) {
+          responseContent.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
+        }
+      }
+    </script>
+  </body>
+</html>

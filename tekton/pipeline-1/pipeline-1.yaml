@@ -81,16 +81,18 @@ spec:
     #   workspaces:
     #   - name: workingDir
     #     workspace: shared
-    - name: builder
+    - name: source-to-image
       taskRef:
-        name: buildah
+        name: s2i
       runAfter:
         - git-clone
       workspaces:
         - name: source
           workspace: shared
       params:
+        - name: BUILDER_IMAGE
+          value: registry.access.redhat.com/ubi9/nodejs-20
         - name: IMAGE
           value: $(params.image-tag)
-        - name: CONTEXT
+        - name: PATH_CONTEXT
           value: ./$(params.subdirectory)
